@@ -1,0 +1,50 @@
+% Main script to showcase modulation and demodulation
+clc;
+clear;
+close all;
+
+% Parameters
+f_modulation = 200; % Modulation frequency (Hz)
+deltaF_interest = 10; % Hz
+f_cut_on = f_modulation - deltaF_interest; % Bandpass lower cutoff frequency (Hz)
+f_cut_off = f_modulation + deltaF_interest; % Bandpass upper cutoff frequency (Hz)
+scalar = 10; % Sampling scalar (f_sampling = scalar * f_cut_off)
+
+% Generate modulated signal
+[t, sampled_signal, original_signal] = generate_modulated_signal(f_cut_on, f_cut_off, f_modulation, scalar);
+f_sampling = scalar * f_cut_off;
+
+% Demodulate signal
+demodulated_signal = demodulate_signal(sampled_signal, f_modulation, f_sampling);
+
+%% Plot resultsde
+figure;
+
+% Modulated Signal
+subplot(3,1,1);
+plot(t, sampled_signal);
+title('Sampled Signal (Modulated)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+
+% Frequency Spectrum of Modulated Signal
+subplot(3,1,2);
+N = length(sampled_signal);
+frequencies = (0:N-1) * (f_sampling / N);
+Y = abs(fft(sampled_signal));
+plot(frequencies, Y);
+title('Frequency Spectrum of Sampled Signal');
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+grid on;
+xlim([0, f_sampling/2]);
+
+% Demodulated Signal
+subplot(3,1,3);
+plot(t, demodulated_signal);
+title('Demodulated Signal (Baseband)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+grid on;
+
